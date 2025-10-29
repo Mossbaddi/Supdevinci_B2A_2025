@@ -1,6 +1,9 @@
+require('dotenv').config();
+
 // Import d'express
 const express = require('express')
 
+const { connectDB } = require('./config/database')
 
 // Initialiser mon application 
 const app = express()
@@ -14,6 +17,19 @@ app.get('/', (req, res) => {
     })
 })
 
-app.listen(PORT, () => {
-    console.log(`Le serveur a bien démarré au port ${PORT}, youpi, hourra.`)
-})
+
+async function startServer() {
+    try {
+    await connectDB()
+
+    app.listen(PORT, () => {
+        console.log(`Le serveur a bien démarré au port ${PORT}, youpi, hourra.`)
+    })
+    } catch (error) {
+        console.error('Erreur au démarrage du serveur :', error);
+        process.exit(1);
+    }
+}
+
+
+startServer()
