@@ -93,6 +93,8 @@ articleSchema.statics.findByCategorie = function(categorie) {
 
 
 
+
+
 // virtuals.js
 
 articleSchema.virtual('resume').get(function() {
@@ -102,4 +104,6 @@ articleSchema.virtual('resume').get(function() {
     return this.contenu.substring(0, 150) + '...';
 });
 
+const Article = mongoose.model('Article', articleSchema)
 
+module.exports = Article
