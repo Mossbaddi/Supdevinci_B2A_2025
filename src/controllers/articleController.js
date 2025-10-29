@@ -1,4 +1,5 @@
 const Article = require('../models/Article')
+const QueryFeatures = require('../utils/queryFeatures')
 
 
 // CREATE
@@ -43,8 +44,14 @@ async function createArticle(req, res) {
 const getAllArticles = async (req, res) => {
     try {
         // Récupérer tous les articles, triés par date de création (plus récent en premier)
-        const articles = await Article.find().sort({ createdAt: -1 });
+        // const articles = await Article.find().sort({ createdAt: -1 });
 
+        const features = new QueryFeatures(Article.find(), req.query)
+            .filter()
+            .search()
+            .sort()
+
+        const articles = await features.query
         // Retourner les articles avec leur nombre
         res.status(200).json({
             success: true,

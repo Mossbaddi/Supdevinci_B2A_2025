@@ -1,0 +1,19 @@
+@articleId = ""
+
+GET http://localhost:3000/api/articles/?sort=-createdAt&search=Node
+
+
+###
+POST http://localhost:3000/api/articles
+Content-Type: application/json
+
+{
+    "title": "test",
+    "contenu" : "blabla"
+}
+
+
+###
+
+PUT http://localhost:3000/api/articles/{{{{articleId}}}}
+
