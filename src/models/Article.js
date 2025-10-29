@@ -47,7 +47,59 @@ const articleSchema = mongoose.Schema(
             type: Number,
             default: 0,
             min: [0, 'Le nombre de vues ne peut pas être négatif']
+        },
+
+        
+    },
+    {
+        timestamps: true,
+        toJSON: {
+            transform: function(doc, ret) {
+                delete ret.__v;
+                return ret;
+            }
         }
     }
-
 )
+
+
+// methods.js
+
+articleSchema.methods.publier = function() {
+    this.publie = true
+    return this.save();
+}
+
+articleSchema.methods.depublier = function() {
+    this.publie = false;
+    return this.save()
+}
+
+articleSchema.methods.incrementerVues = function() {
+    this.vues += 1;
+    return this.save()
+ }
+
+
+//  statics.js
+
+articleSchema.statics.findPublies = function() {
+    return this.find({ publie: true }).sort({ createdAt: -1 });
+};
+
+articleSchema.statics.findByCategorie = function(categorie) {
+    return this.find({ categorie, publie: true }).sort({ createdAt: -1 });
+};
+
+
+
+// virtuals.js
+
+articleSchema.virtual('resume').get(function() {
+    if (this.contenu.length <= 150) {
+        return this.contenu;
+    }
+    return this.contenu.substring(0, 150) + '...';
+});
+
+
