@@ -54,6 +54,7 @@ const articleSchema = mongoose.Schema(
     {
         timestamps: true,
         toJSON: {
+            virtuals: true,
             transform: function(doc, ret) {
                 delete ret.__v;
                 return ret;
@@ -103,6 +104,7 @@ articleSchema.virtual('resume').get(function() {
     }
     return this.contenu.substring(0, 150) + '...';
 });
+
 
 const Article = mongoose.model('Article', articleSchema)
 

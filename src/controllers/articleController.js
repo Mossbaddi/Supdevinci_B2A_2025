@@ -1,10 +1,10 @@
+const { catchAsync } = require('../middlewares/ErrorHandler');
 const Article = require('../models/Article')
 const QueryFeatures = require('../utils/queryFeatures')
 
 
 // CREATE
-async function createArticle(req, res) {
-    try {
+const createArticle = catchAsync(async (req, res) => {
         // Je récupère le contenu de ma requête
         const {titre, contenu, auteur, categorie} = req.body;
 
@@ -23,26 +23,11 @@ async function createArticle(req, res) {
             message: 'Article créé avec success',
             data: articleSauvegarde
         })
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({
-                success: false,
-                message: 'Erreur de validation',
-                errors: Object.values(error.errors).map(err => err.message)
-            })
-        }
 
-        res.status(500).json({
-            success: false,
-            message: 'Erreur coté serveur',
-            error: error.message
-        })}
-
-}
+})
 
 // READ
-const getAllArticles = async (req, res) => {
-    try {
+const getAllArticles = catchAsync(async (req, res) => {
         // Récupérer tous les articles, triés par date de création (plus récent en premier)
         // const articles = await Article.find().sort({ createdAt: -1 });
         const totalCount = await Article.countDocuments()
@@ -73,18 +58,9 @@ const getAllArticles = async (req, res) => {
         // Retourner les articles avec leur nombre
         res.status(200).json(response);
 
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la récupération des articles',
-            error: error.message
-        });
-    }
-};
+})
 
-
-const getArticleById = async (req, res) => {
-    try {
+const getArticleById = catchAsync(async (req, res) => {
         // Récupérer l'ID depuis les paramètres de l'URL
         const { id } = req.params;
 
@@ -108,27 +84,11 @@ const getArticleById = async (req, res) => {
             data: article
         });
 
-    } catch (error) {
-        // Erreur si l'ID n'est pas au bon format
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({
-                success: false,
-                message: 'ID d\'article invalide'
-            });
-        }
-
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la récupération de l\'article',
-            error: error.message
-        });
-    }
-};
+})
 
 
 // UPDATE
-const updateArticle = async (req, res) => {
-    try {
+const updateArticle = catchAsync(async (req, res) => {
         const { id } = req.params;
 
         // Chercher et mettre à jour l'article
@@ -156,34 +116,10 @@ const updateArticle = async (req, res) => {
             message: 'Article mis à jour avec succès',
             data: article
         });
-
-    } catch (error) {
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({
-                success: false,
-                message: 'ID d\'article invalide'
-            });
-        }
-
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({
-                success: false,
-                message: 'Erreur de validation',
-                errors: Object.values(error.errors).map(err => err.message)
-            });
-        }
-
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la mise à jour',
-            error: error.message
-        });
-    }
-};
+})
 // DELETE
 
-const deleteArticle = async (req, res) => {
-    try {
+const deleteArticle = catchAsync(async (req, res) => {
         const { id } = req.params;
 
         // Chercher et supprimer l'article
@@ -203,26 +139,11 @@ const deleteArticle = async (req, res) => {
             data: article
         });
 
-    } catch (error) {
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({
-                success: false,
-                message: 'ID d\'article invalide'
-            });
-        }
-
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la suppression',
-            error: error.message
-        });
-    }
-};
+})
 
 
 
-const getPublishedArticles = async (req, res) => {
-    try {
+const getPublishedArticles = catchAsync(async (req, res) => {
         // Utiliser la méthode statique du modèle
         const articles = await Article.findPublies();
 
@@ -232,18 +153,10 @@ const getPublishedArticles = async (req, res) => {
             data: articles
         });
 
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la récupération des articles publiés',
-            error: error.message
-        });
-    }
-};
+})
 
 
-const publishArticle = async (req, res) => {
-    try {
+const publishArticle = catchAsync(async (req, res) => {
         const { id } = req.params;
 
         // Trouver l'article
@@ -265,14 +178,7 @@ const publishArticle = async (req, res) => {
             data: article
         });
 
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erreur lors de la publication',
-            error: error.message
-        });
-    }
-};
+})
 
 
 

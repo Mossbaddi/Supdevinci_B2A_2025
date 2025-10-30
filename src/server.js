@@ -6,7 +6,8 @@ const express = require('express')
 const { connectDB } = require('./config/database')
 
 // Routes imports
-const articleRoutes = require('./routes/articles')
+const articleRoutes = require('./routes/articles');
+const { errorHandler, notFound } = require('./middlewares/ErrorHandler');
 
 // Initialiser mon application 
 const app = express()
@@ -26,6 +27,10 @@ app.get('/', (req, res) => {
 
 
 app.use('/api/articles', articleRoutes)
+
+app.use(notFound)
+
+app.use(errorHandler)
 
 
 
