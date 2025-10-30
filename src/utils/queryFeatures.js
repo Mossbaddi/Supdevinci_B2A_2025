@@ -52,7 +52,54 @@ class QueryFeatures {
         return this
     }
 
+    limitFields() {
+        if (this.queryString.fields) {
+            const fields = this.queryString.fields.split(',').join(' ');
+            this.query = this.query.select(fields)
+        }
+
+        return this
+    }
     
+
+
+    paginate() {
+        const page = Math.max(1, (parseInt(this.queryString.page, 10) || 1));
+        const limit = Math.min(
+            100,
+            Math.max(1, parseInt(this.queryString.limit, 10) || 10)
+        )
+
+        const skip = (page - 1) * limit
+
+        this.query = this.query.skip(skip).limit(limit)
+
+        this.paginationInfo = {
+            page,
+            limit,
+            skip
+        }
+
+        return this 
+    }
+
+    getPaginationInfo(totalCount) {
+        if (!this.paginationInfo) {
+            return null
+        }
+        
+        const {page, limit} = this.paginationInfo;
+        const totalPages = Math.ceil(totalCount / limit)
+
+        return {
+            currentPage: page,
+            totalPages: totalPages,
+            pageSize: limit,
+            totalItems : totalCount,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1
+        }
+    }
 
 }
 

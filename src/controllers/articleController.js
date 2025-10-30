@@ -45,19 +45,33 @@ const getAllArticles = async (req, res) => {
     try {
         // Récupérer tous les articles, triés par date de création (plus récent en premier)
         // const articles = await Article.find().sort({ createdAt: -1 });
+        const totalCount = await Article.countDocuments()
 
         const features = new QueryFeatures(Article.find(), req.query)
             .filter()
             .search()
             .sort()
+            .limitFields()
+            .paginate();
 
         const articles = await features.query
-        // Retourner les articles avec leur nombre
-        res.status(200).json({
+
+        const paginationInfo = features.getPaginationInfo(totalCount)
+
+        const response = {
             success: true,
             count: articles.length,
-            data: articles
-        });
+            totalCount: totalCount,
+            data: articles,
+            // pagination?
+        }
+
+        if (paginationInfo) {
+            response.pagination = paginationInfo
+        }
+
+        // Retourner les articles avec leur nombre
+        res.status(200).json(response);
 
     } catch (error) {
         res.status(500).json({
